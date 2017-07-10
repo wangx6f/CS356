@@ -77,6 +77,9 @@ public class AdminControlPanel extends Application {
 
         TextField inputGroupID = new TextField("Group ID");
         Button addGroup = new Button("Add Group");
+        addGroup.setOnMouseClicked(event -> {
+            this.addNewComponent(new UserGroup(inputGroupID.getText()));
+        });
         HBox addUserGroupBox = new HBox(SPACING);
         addUserGroupBox.getChildren().addAll(inputGroupID,addGroup);
 

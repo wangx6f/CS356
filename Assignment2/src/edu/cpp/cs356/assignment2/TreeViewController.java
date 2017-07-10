@@ -21,11 +21,6 @@ public class TreeViewController  implements Observer{
        treeView.setRoot(construct());
     }
 
-    private String getSelectedTreeItemID()
-    {
-        ComponentTreeItem selected = (ComponentTreeItem) treeView.getSelectionModel().getSelectedItem();
-        return selected.getComponent().getID();
-    }
 
     @Override
     public void update(Intent intent) {
@@ -52,7 +47,7 @@ public class TreeViewController  implements Observer{
     }
 
 
-    private ComponentTreeItem createItem(Component component)
+    private TreeItem createItem(Component component)
     {
        return new ComponentTreeItem(component);
 

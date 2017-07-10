@@ -9,7 +9,6 @@ public interface Server {
 
     public void addComponent(Component newComponent,Component parentComponent) throws ServerException;
 
-
     public Component getRoot();
 
     public void postTextTweet(String userID,String text);
