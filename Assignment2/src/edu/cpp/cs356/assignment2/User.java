@@ -41,6 +41,7 @@ public class User extends Observable implements Component,Observer{
     {
         followingList.add(followingTarget);
         followingTarget.attachObserver(this);
+        notifyAllObserver(new UIUpdateIntent());
     }
 
     public void postTextTweet(String context)

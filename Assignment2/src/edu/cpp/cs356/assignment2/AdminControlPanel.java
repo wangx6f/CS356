@@ -18,10 +18,10 @@ import javafx.stage.Stage;
  */
 public class AdminControlPanel extends Application {
 
-    static final public int SCENE_HEIGHT = 500;
-    static final public int SCENE_WIDTH = 600;
-    static final public double SPACING = 20f;
-    static final public double GAP_SPACING = 100f;
+    static final private int SCENE_HEIGHT = 500;
+    static final private int SCENE_WIDTH = 600;
+    static final private double SPACING = 20f;
+    static final private double GAP_SPACING = 100f;
 
     private Server mServer;
 

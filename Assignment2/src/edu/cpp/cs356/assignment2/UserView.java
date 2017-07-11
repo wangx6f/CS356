@@ -5,15 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +19,10 @@ import java.util.List;
  * Created by wxy03 on 7/10/2017.
  */
 public class UserView implements Observer {
+
+    static final private int SCENE_HEIGHT = 500;
+    static final private int SCENE_WIDTH = 300;
+    static final private double SPACING = 10f;
 
     private Server mServer;
 
@@ -36,6 +36,7 @@ public class UserView implements Observer {
     {
         mServer=server;
         mUser=thisUser;
+        mUser.attachObserver(this);
         updateFollowingInfo();
 
     }
@@ -44,14 +45,12 @@ public class UserView implements Observer {
 
         BorderPane root = new BorderPane();
         root.setCenter(initializeUI());
-        Scene scene = new Scene(root,AdminControlPanel.SCENE_WIDTH,AdminControlPanel.SCENE_HEIGHT);
+        Scene scene = new Scene(root,SCENE_WIDTH,SCENE_HEIGHT);
         Stage newStage = new Stage();
         newStage.setScene(scene);
         newStage.setTitle(mUser.getID());
+        newStage.setOnCloseRequest(event -> {mUser.detachObserver(this);});
         newStage.show();
-
-
-
     }
 
     private Node initializeUI()
@@ -62,14 +61,17 @@ public class UserView implements Observer {
         followUser.setOnMouseClicked(event -> {
             follow(userIDInput.getText());
         });
-        HBox followUserBox = new HBox(AdminControlPanel.SPACING);
+        HBox followUserBox = new HBox(SPACING);
         followUserBox.getChildren().addAll(userIDInput,followUser);
 
-        ListView followingListView = new ListView(followingObservableList);
 
-        VBox mainBox = new VBox(AdminControlPanel.SPACING);
-        mainBox.setPadding(new Insets(AdminControlPanel.SPACING));
-        mainBox.getChildren().addAll(followUserBox,followingListView);
+        Label followingLabel = new Label("Current following:");
+        ListView followingListView = new ListView(followingObservableList);
+        VBox followingListBox = new VBox(followingLabel,followingListView);
+
+        VBox mainBox = new VBox(SPACING);
+        mainBox.setPadding(new Insets(SPACING));
+        mainBox.getChildren().addAll(followUserBox,followingListBox);
 
         return mainBox;
 
@@ -81,7 +83,6 @@ public class UserView implements Observer {
     {
         try {
             mUser.follow(mServer.getUserByID(userID));
-            updateFollowingInfo();
         }catch (ServerException e)
         {
             showAlert(e.getMessage());
@@ -107,7 +108,6 @@ public class UserView implements Observer {
             followingObservableList = FXCollections.observableList(userIDList);
         else
             followingObservableList.setAll(FXCollections.observableList(userIDList));
-
         if(tweetObservableList == null)
             tweetObservableList = FXCollections.observableList(tweetList);
         else
@@ -132,7 +132,8 @@ public class UserView implements Observer {
 
     @Override
     public void update(Intent intent) {
-
+        if(intent instanceof UIUpdateIntent)
+        updateFollowingInfo();
     }
 
 }
