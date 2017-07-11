@@ -28,8 +28,8 @@ public class User extends Observable implements Component,Observer{
     }
 
     @Override
-    public void addComponent(Component child) throws ServerException {
-        throw new ServerException("Unable to add component under a user.");
+    public boolean addComponent(Component child){
+        return false;
     }
 
     @Override
@@ -41,13 +41,12 @@ public class User extends Observable implements Component,Observer{
     {
         followingList.add(followingTarget);
         followingTarget.attachObserver(this);
-        notifyAllObserver(new UIUpdateIntent());
     }
 
     public void postTextTweet(String context)
     {
         myTweetList.add(new TextTweet(userID,context));
-        notifyAllObserver(new UIUpdateIntent());
+        notifyAllObserver(new NewTweetIntent());
 
     }
 

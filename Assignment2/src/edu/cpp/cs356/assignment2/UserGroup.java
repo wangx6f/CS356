@@ -23,9 +23,10 @@ public class UserGroup implements Component {
     }
 
     @Override
-    public void addComponent(Component child) {
+    public boolean addComponent(Component child) {
 
         children.add(child);
+        return true;
     }
 
     @Override

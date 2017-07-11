@@ -7,31 +7,28 @@ import javafx.scene.control.TreeView;
 /**
  * Created by Xinyuan Wang on 7/9/2017.
  */
-public class TreeViewController  implements Observer{
+public class TreeViewController{
 
 
     private TreeView treeView;
 
-    private Component root;
+    private Server mServer;
 
-    public TreeViewController(TreeView treeView,Component root)
+    public TreeViewController(TreeView treeView,Server server)
     {
         this.treeView = treeView;
-        this.root = root;
-       treeView.setRoot(construct());
+        this.mServer = server;
+        updateTreeView();
     }
 
-
-    @Override
-    public void update(Intent intent) {
-
+    public void updateTreeView()
+    {
         treeView.setRoot(construct());
-
     }
 
     private TreeItem construct()
     {
-        return construct(root);
+        return construct(mServer.getRoot());
     }
 
     private TreeItem construct(Component rootComponent)
@@ -51,6 +48,15 @@ public class TreeViewController  implements Observer{
     {
        return new ComponentTreeItem(component);
 
+    }
+
+    public Component getSelected()
+    {
+        ComponentTreeItem selected = (ComponentTreeItem) treeView.getSelectionModel().getSelectedItem();
+        if(selected==null)
+            return null;
+        else
+            return selected.getComponent();
     }
 
 }

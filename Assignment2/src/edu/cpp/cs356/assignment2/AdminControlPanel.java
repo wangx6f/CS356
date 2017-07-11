@@ -18,16 +18,14 @@ import javafx.stage.Stage;
  */
 public class AdminControlPanel extends Application {
 
-    final private int SCENE_HEIGHT = 500;
-    final private int SCENE_WIDTH = 600;
-    final private double SPACING = 20f;
-    final private double GAP_SPACING = 100f;
+    static final public int SCENE_HEIGHT = 500;
+    static final public int SCENE_WIDTH = 600;
+    static final public double SPACING = 20f;
+    static final public double GAP_SPACING = 100f;
 
     private Server mServer;
 
-    private TreeView treeView;
-
-
+    private TreeViewController treeViewController;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -36,33 +34,24 @@ public class AdminControlPanel extends Application {
         primaryStage.setScene(initializeUI());
         primaryStage.show();
 
-
-
-
     }
 
     private Scene initializeUI()
     {
-
-        initializeTreeView();
-
-
-
-
         BorderPane borderPane = new BorderPane();
-        borderPane.setLeft(treeView);
+        borderPane.setLeft(initializeTreeView());
         borderPane.setCenter(initializeControlArea());
         Scene scene = new Scene(borderPane,SCENE_WIDTH,SCENE_HEIGHT);
         return scene;
     }
 
 
-    private void initializeTreeView()
+    private Node initializeTreeView()
     {
-        treeView = new TreeView();
-        TreeViewController treeViewController = new TreeViewController(treeView,mServer.getRoot());
-        ((Observable)mServer).attachObserver(treeViewController);
+        TreeView treeView = new TreeView();
+        treeViewController = new TreeViewController(treeView,mServer);
         treeView.getSelectionModel().selectFirst();
+        return treeView;
     }
 
     private Node initializeControlArea()
@@ -84,6 +73,9 @@ public class AdminControlPanel extends Application {
         addUserGroupBox.getChildren().addAll(inputGroupID,addGroup);
 
         Button userView = new Button("Open User View");
+        userView.setOnMouseClicked(event -> {
+            showUserView();
+        });
 
         VBox topBox = new VBox(SPACING);
         topBox.setPadding(new Insets(SPACING));
@@ -98,28 +90,22 @@ public class AdminControlPanel extends Application {
 
     private Component getSelectedComponent()
     {
-        ComponentTreeItem selected = (ComponentTreeItem) treeView.getSelectionModel().getSelectedItem();
-        if(selected==null)
-            return null;
-        else
-            return selected.getComponent();
+            return treeViewController.getSelected();
     }
 
     private void addNewComponent(Component newComponent)
     {
 
         if(newComponent.getID().isEmpty())
-        {
+
             showAlert("Please enter new user ID.");
-        }
         else if(getSelectedComponent()==null)
-        {
             showAlert("Please Select a group.");
-        }
         else
         {
             try{
                 mServer.addComponent(newComponent,getSelectedComponent());
+                treeViewController.updateTreeView();
             } catch (ServerException e) {
                 showAlert(e.getMessage());
             }
@@ -127,6 +113,14 @@ public class AdminControlPanel extends Application {
         }
     }
 
+    private void showUserView()
+    {
+        Component selected = getSelectedComponent();
+        if(selected instanceof User)
+        new UserView(mServer,(User)selected).showUserWindows();
+        else
+            showAlert("Please select a user!");
+    }
 
     private void showAlert(String message)
     {

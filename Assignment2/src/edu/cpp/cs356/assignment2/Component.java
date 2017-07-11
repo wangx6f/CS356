@@ -10,7 +10,7 @@ public interface Component  {
 
     public String getID();
 
-    public void addComponent(Component child) throws ServerException;
+    public boolean addComponent(Component child);
 
     public List<Component> getChildren();
 
