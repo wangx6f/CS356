@@ -1,7 +1,6 @@
 package edu.cpp.cs356.assignment2;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -10,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,23 +21,23 @@ import java.util.List;
 public class UserView implements Observer {
 
     static final private int SCENE_HEIGHT = 500;
-    static final private int SCENE_WIDTH = 300;
+    static final private int SCENE_WIDTH = 600;
     static final private double SPACING = 10f;
 
     private Server mServer;
 
     private User mUser;
 
-    private ObservableList followingObservableList;
+    private ListView followingListView;
 
-    private ObservableList tweetObservableList;
+    private ListView newsFeedListView;
+
 
     public UserView(Server server, User thisUser)
     {
         mServer=server;
         mUser=thisUser;
         mUser.attachObserver(this);
-        updateFollowingInfo();
 
     }
 
@@ -45,6 +45,7 @@ public class UserView implements Observer {
 
         BorderPane root = new BorderPane();
         root.setCenter(initializeUI());
+        updateFollowingInfo();
         Scene scene = new Scene(root,SCENE_WIDTH,SCENE_HEIGHT);
         Stage newStage = new Stage();
         newStage.setScene(scene);
@@ -66,18 +67,33 @@ public class UserView implements Observer {
 
 
         Label followingLabel = new Label("Current following:");
-        ListView followingListView = new ListView(followingObservableList);
+        followingListView = new ListView();
         VBox followingListBox = new VBox(followingLabel,followingListView);
+
+        TextField tweetMessageInput = new TextField("Tweet Message");
+        Button postNewTweet = new Button("Post Tweet");
+        postNewTweet.setOnMouseClicked(mouseEvent -> {
+            mUser.postTextTweet(tweetMessageInput.getText());
+        });
+        HBox postTweetBox = new HBox(SPACING);
+        postTweetBox.getChildren().addAll(tweetMessageInput,postNewTweet);
+
+
+        Label newsFeedLabel = new Label("News feed:");
+        newsFeedListView = new ListView();
+        VBox newsFeedListBox = new VBox(newsFeedLabel,newsFeedListView);
+
 
         VBox mainBox = new VBox(SPACING);
         mainBox.setPadding(new Insets(SPACING));
-        mainBox.getChildren().addAll(followUserBox,followingListBox);
+        mainBox.getChildren().addAll(followUserBox,followingListBox,postTweetBox,newsFeedListBox);
 
         return mainBox;
 
 
 
     }
+
 
     private void follow(String userID)
     {
@@ -92,26 +108,25 @@ public class UserView implements Observer {
     private void updateFollowingInfo()
     {
         List<String> userIDList = new ArrayList<>();
-        List<String> tweetList = new ArrayList<>();
+        List<Tweet> tweetList = new ArrayList<>();
         for(User followingUser:mUser.getFollowingList())
         {
             userIDList.add(followingUser.getID());
             for(Tweet tweet:followingUser.getAllTweets())
-                tweetList.add(formatTweet(tweet));
+                tweetList.add(tweet);
         }
-        for(Tweet tweet:mUser.getAllTweets())
-            tweetList.add(formatTweet(tweet));
+
+        List tweetListAsString = new ArrayList<>();
 
         Collections.sort(tweetList);
 
-        if(followingObservableList == null)
-            followingObservableList = FXCollections.observableList(userIDList);
-        else
-            followingObservableList.setAll(FXCollections.observableList(userIDList));
-        if(tweetObservableList == null)
-            tweetObservableList = FXCollections.observableList(tweetList);
-        else
-            tweetObservableList.setAll(FXCollections.observableList(tweetList));
+        for(Tweet tweet:tweetList)
+        {
+            tweetListAsString.add(formatTweet(tweet));
+        }
+
+        followingListView.setItems(FXCollections.observableList(userIDList));
+        newsFeedListView.setItems(FXCollections.observableList(tweetListAsString));
     }
 
 

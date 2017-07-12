@@ -37,6 +37,6 @@ public class TextTweet implements Tweet {
 
     @Override
     public int compareTo(Object o) {
-        return this.postDateTime.compareTo(((Tweet) o).getDateTime());
+        return ((Tweet)o).getDateTime().compareTo(this.getDateTime());
     }
 }

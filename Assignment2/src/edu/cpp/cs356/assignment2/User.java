@@ -9,17 +9,18 @@ import java.util.List;
  */
 public class User extends Observable implements Component,Observer{
 
-    String userID;
+    private String userID;
 
-    List<Tweet> myTweetList;
+    private List<Tweet> myTweetList;
 
-    List<User> followingList;
+    private List<User> followingList;
 
     public User(String userID)
     {
         this.userID = userID;
         this.myTweetList = new ArrayList<>();
         this.followingList = new ArrayList<>();
+        followingList.add(this);
     }
 
     @Override
@@ -39,15 +40,18 @@ public class User extends Observable implements Component,Observer{
 
     public void follow(User followingTarget)
     {
-        followingList.add(followingTarget);
-        followingTarget.attachObserver(this);
-        notifyAllObserver(new UIUpdateIntent());
+        if(!followingList.contains(followingTarget)) {
+            followingList.add(followingTarget);
+            followingTarget.attachObserver(this);
+            notifyAllObserver(new UIUpdateIntent());
+        }
     }
 
     public void postTextTweet(String context)
     {
         myTweetList.add(new TextTweet(userID,context));
         notifyAllObserver(new NewTweetIntent());
+        notifyAllObserver(new UIUpdateIntent());
 
     }
 
