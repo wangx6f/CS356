@@ -2,11 +2,13 @@ package edu.cpp.cs356.assignment2;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -66,16 +68,20 @@ public class UserView implements Observer {
         followUserBox.getChildren().addAll(userIDInput,followUser);
 
 
-        Label followingLabel = new Label("Current following:");
+        Label followingLabel = new Label("Currently following:");
+        followingLabel.setPadding(new Insets(0,0,SPACING,0));
         followingListView = new ListView();
         VBox followingListBox = new VBox(followingLabel,followingListView);
 
-        TextField tweetMessageInput = new TextField("Tweet Message");
+
+        TextArea tweetMessageInput = new TextArea("Tweet Message");
+        tweetMessageInput.setWrapText(true);
         Button postNewTweet = new Button("Post Tweet");
         postNewTweet.setOnMouseClicked(mouseEvent -> {
             mUser.postTextTweet(tweetMessageInput.getText());
         });
         HBox postTweetBox = new HBox(SPACING);
+        postTweetBox.setAlignment(Pos.BOTTOM_LEFT);
         postTweetBox.getChildren().addAll(tweetMessageInput,postNewTweet);
 
 
@@ -87,6 +93,7 @@ public class UserView implements Observer {
         VBox mainBox = new VBox(SPACING);
         mainBox.setPadding(new Insets(SPACING));
         mainBox.getChildren().addAll(followUserBox,followingListBox,postTweetBox,newsFeedListBox);
+
 
         return mainBox;
 
