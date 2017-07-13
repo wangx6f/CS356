@@ -1,1 +1,1 @@
-# CS356
+# CS356 - Assignment 1
