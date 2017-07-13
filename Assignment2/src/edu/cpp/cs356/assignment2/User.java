@@ -38,6 +38,11 @@ public class User extends Observable implements Component,Observer{
         return null;
     }
 
+    @Override
+    public void accept(ComponentVisitor cv) {
+        cv.visitUser(this);
+    }
+
     public void follow(User followingTarget)
     {
         if(!followingList.contains(followingTarget)) {

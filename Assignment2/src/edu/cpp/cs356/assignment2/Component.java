@@ -14,5 +14,7 @@ public interface Component  {
 
     public List<Component> getChildren();
 
+    public void accept(ComponentVisitor cv);
+
 
 }

@@ -4,10 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -81,8 +78,19 @@ public class AdminControlPanel extends Application {
         topBox.setPadding(new Insets(SPACING));
         topBox.getChildren().addAll(addUserBox,addUserGroupBox,userView);
 
+        Button totalUser = new Button("Show User Total");
+        totalUser.setOnMouseClicked(mouseEvent -> {countUser();});
+        Button totalGroup = new Button("Show Group Total");
+        totalGroup.setOnMouseClicked(mouseEvent -> {countUserGroup();});
+        Button totalTweet = new Button("Show Tweet Total");
+        totalTweet.setOnMouseClicked(mouseEvent -> {countTweet();});
+        Button positive = new Button("Show Positive Percentage");
+        positive.setOnMouseClicked(mouseEvent -> {countPositiveTweet();});
+        VBox bottomBox = new VBox(SPACING);
+        bottomBox.getChildren().addAll(totalUser,totalGroup,totalTweet,positive);
+        bottomBox.setPadding(new Insets(SPACING));
         VBox mainBox = new VBox(GAP_SPACING);
-        mainBox.getChildren().addAll(topBox);
+        mainBox.getChildren().addAll(topBox,bottomBox);
 
         return mainBox;
 
@@ -127,6 +135,46 @@ public class AdminControlPanel extends Application {
         new Alert(Alert.AlertType.WARNING,message).show();
     }
 
+    private void showMsgDialog(String title,String msg)
+    {
+        ButtonType buttonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle(title);
+        dialog.setContentText(msg);
+        dialog.getDialogPane().getButtonTypes().add(buttonType);
+        dialog.show();
+    }
+
+    private void countUser()
+    {
+        CountUserVisitor countUserVisitor = new CountUserVisitor();
+        mServer.traverse(countUserVisitor);
+        showMsgDialog("Total User","The total number of user is "+countUserVisitor.getCount()+".");
+    }
+
+    private void countUserGroup()
+    {
+        CountUserGroupVisitor countUserGroupVisitor = new CountUserGroupVisitor();
+        mServer.traverse(countUserGroupVisitor);
+        showMsgDialog("Total User Group","The total number of user group is "+countUserGroupVisitor.getCount()+".");
+    }
+
+    private void countTweet()
+    {
+        CountTweetVisitor countTweetVisitor = new CountTweetVisitor();
+        mServer.traverse(countTweetVisitor);
+        showMsgDialog("Total Tweet","The total number of tweet is "+countTweetVisitor.getCount()+".");
+    }
+
+
+    private void countPositiveTweet()
+    {
+        PositiveTweetVisitor positiveTweetVisitor = new PositiveTweetVisitor();
+        mServer.traverse(positiveTweetVisitor);
+        showMsgDialog("Positive Tweet","The total number of positive tweet is "
+                +positiveTweetVisitor.getPercentage()*100+"%."+
+                "\n(positive tweet - hash code mod 100 >50)");
+    }
 
 
 }

@@ -64,6 +64,19 @@ public class TwitterServer implements Server {
         }
     }
 
+    @Override
+    public void traverse(ComponentVisitor visitor) {
+        traverse(this.getRoot(),visitor);
+
+    }
+
+    private void traverse(Component root,ComponentVisitor visitor) {
+
+        root.accept(visitor);
+        if(root.getChildren()!=null)
+        for(Component child:root.getChildren())
+            traverse(child,visitor);
+    }
 
 
 }

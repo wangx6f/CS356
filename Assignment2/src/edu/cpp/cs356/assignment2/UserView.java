@@ -2,13 +2,11 @@ package edu.cpp.cs356.assignment2;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -80,12 +78,12 @@ public class UserView implements Observer {
         postNewTweet.setOnMouseClicked(mouseEvent -> {
             mUser.postTextTweet(tweetMessageInput.getText());
         });
-        HBox postTweetBox = new HBox(SPACING);
-        postTweetBox.setAlignment(Pos.BOTTOM_LEFT);
+        VBox postTweetBox = new VBox(SPACING);
         postTweetBox.getChildren().addAll(tweetMessageInput,postNewTweet);
 
 
         Label newsFeedLabel = new Label("News feed:");
+        newsFeedLabel.setPadding(new Insets(0,0,SPACING,0));
         newsFeedListView = new ListView();
         VBox newsFeedListBox = new VBox(newsFeedLabel,newsFeedListView);
 

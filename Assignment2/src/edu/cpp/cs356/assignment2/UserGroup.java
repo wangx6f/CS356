@@ -33,4 +33,9 @@ public class UserGroup implements Component {
     public List<Component> getChildren() {
         return children;
     }
+
+    @Override
+    public void accept(ComponentVisitor cv) {
+        cv.visitUserGroup(this);
+    }
 }

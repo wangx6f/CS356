@@ -12,6 +12,9 @@ public interface Server {
 
     public User getUserByID(String userID) throws ServerException;
 
+    public void traverse(ComponentVisitor visitor);
+
+
 
 
 }
